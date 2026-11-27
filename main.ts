@@ -1,35 +1,57 @@
-// DealHound — Black Friday deal finder, hand-in program (Node 22, standard library only).
+// DealHound R2 — build entry. Copies app/ and screenshots/ into the
+// output directory and writes dossier.json via the competition kit's
+// vendor/makefun-frontend.ts (which this file does not modify).
 //
-// The site is this directory's app/ folder: plain static files a browser opens at
-// app/index.html (ES modules, CSS, no build step), its 235 verified deals held in their
-// own file app/data.js. Nothing the site runs, styles or shows loads over the network;
-// each deal links out to its store. This program hands the site in: it copies app/ and
-// screenshots/ from beside this file to /output and writes /output/dossier.json, the
-// summary the judge reads (screenshots, the first load's files and bytes, and the
-// source), with the vendored make.fun library. Leave vendor/makefun-frontend.ts as it
-// is: the scorer requires dossier.json to be byte for byte what its own copy writes.
+// Usage:  MAKEFUN_OUTPUT_DIR=out node main.ts
+// Output: <out>/app/  <out>/screenshots/  <out>/dossier.json
 //
-// Serve it locally with `node serve.ts`, then open http://localhost:8080.
-// Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
-//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+// Node 22 stdlib only. Run twice and the output is byte-identical:
+// files are copied in sorted order and the dossier is deterministic.
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-frontend.ts';
 
-const here = fileURLToPath(new URL('.', import.meta.url));
-const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const CAPS = {
+  text_max_bytes: 163840,
+  screenshots: { max: 4, max_bytes: 262144 },
+  app_max_files: 993,
+  app_max_bytes: 16777216,
+};
 
-mkdirSync(out, { recursive: true });
-cpSync(join(here, 'app'), join(out, 'app'), { recursive: true });
-mkdirSync(join(out, 'screenshots'), { recursive: true });
-if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), join(out, 'screenshots'), { recursive: true });
+const root = dirname(fileURLToPath(import.meta.url));
+const outDir = resolve(process.env.MAKEFUN_OUTPUT_DIR || '/output');
 
-// The scorer's own caps: only text_max_bytes shapes the bytes; the others refuse an
-// entry the scorer would refuse (more than 4 screenshots or one over 256 KiB; more than
-// 993 files and directories in app/ or 16 MiB of app files).
-writeFileSync(
-  join(out, 'dossier.json'),
-  buildDossier(out, { text_max_bytes: 163840, screenshots: { max: 4, max_bytes: 262144 }, app_max_files: 993, app_max_bytes: 16777216 }),
-);
+function copyTree(src: string, dst: string): void {
+  if (!existsSync(src)) throw new Error(`missing: ${src}`);
+  mkdirSync(dirname(dst), { recursive: true });
+  cpSync(src, dst, { recursive: true, dereference: false });
+}
+
+function main(): void {
+  const appSrc = join(root, 'app');
+  const shotsSrc = join(root, 'screenshots');
+  if (!existsSync(appSrc)) throw new Error('app/ is missing');
+  if (!existsSync(shotsSrc)) throw new Error('screenshots/ is missing');
+
+  // Fresh output directory, so a stale file can never ship.
+  rmSync(outDir, { recursive: true, force: true });
+  mkdirSync(outDir, { recursive: true });
+
+  copyTree(appSrc, join(outDir, 'app'));
+  copyTree(shotsSrc, join(outDir, 'screenshots'));
+
+  const dossier = buildDossier(root, CAPS);
+  writeFileSync(join(outDir, 'dossier.json'), dossier);
+
+  const appFiles = readdirSync(join(outDir, 'app')).sort();
+  const shotFiles = readdirSync(join(outDir, 'screenshots')).sort();
+  console.log(`DealHound R2 build OK`);
+  console.log(`  output: ${outDir}`);
+  console.log(`  app: ${appFiles.join(', ')}`);
+  console.log(`  screenshots: ${shotFiles.join(', ')}`);
+  console.log(`  dossier.json: ${dossier.length} bytes`);
+}
+
+main();

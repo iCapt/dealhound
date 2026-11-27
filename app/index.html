@@ -1,28 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DealHound — Real Black Friday deals, checked</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314121f'/%3E%3Cpath d='M16 5 L27 16 L16 27 L5 16 Z' fill='%23ffb020'/%3E%3C/svg%3E">
+<title>DealHound — Black Friday deals that are actually deals</title>
+<meta name="description" content="75 Black Friday deals, each checked against a real usual price and compared at other stores. Scored 0–95. No fake usual prices.">
 <link rel="stylesheet" href="style.css">
-<script type="module" src="main.js"></script>
 </head>
 <body>
 <header class="site-header">
-  <div class="wrap">
-    <p class="brand"><a href="#/">DealHound</a></p>
-    <p class="tagline">Real Black Friday &amp; Cyber Monday deals, checked by hand at the store.</p>
-    <p class="stats"><strong>235 verified deals</strong> · 7 stores · 61 at half price or better · Prices checked 27 Nov 2026, 14:52–15:14 WITA</p>
+  <div class="wrap header-in">
+    <a class="brand" href="#/">🐕 DealHound</a>
+    <p class="tagline">Black Friday deals that are actually deals.</p>
+    <nav class="topnav">
+      <a href="#/">All deals</a>
+      <a href="#/top10">Top 10</a>
+      <a href="#/compare">Compare</a>
+    </nav>
   </div>
 </header>
-<main id="app" class="wrap"></main>
-<footer class="site-footer">
-  <div class="wrap">
-    <h2>How we checked</h2>
-    <p>Every price on this page was read on the store’s own page on 27 Nov 2026, between 14:52 and 15:14 WITA, and each deal links to the product at that store. The verdict on a deal compares its sale price with the store’s own usual price shown on the same page — a deep cut is strong evidence, a small cut is a routine sale. Prices move, and a store can sell out: the store page is the price that counts. 19 candidates were left out in audit because their link opened a different product, or one link carried two different prices.</p>
-    <p>DealHound lists deals; it sells nothing. Store names belong to their stores.</p>
+<main class="wrap">
+  <div id="stats"></div>
+  <p id="method" class="method"></p>
+  <div class="search-row" id="searchRow">
+    <label class="search">Search
+      <input id="q" type="search" placeholder="Try “airpods”, “dyson”, “lego”…">
+    </label>
+    <label class="sort">Sort
+      <select id="sort">
+        <option value="score">Best score first</option>
+        <option value="pct">Biggest % off first</option>
+        <option value="save">Most dollars saved first</option>
+        <option value="price">Lowest price first</option>
+      </select>
+    </label>
   </div>
-</footer>
+  <div id="strip"></div>
+  <div id="filters"></div>
+  <div id="active"></div>
+  <div id="view"></div>
+</main>
+<div id="footer" class="wrap"></div>
+<script type="module" src="main.js"></script>
 </body>
 </html>
