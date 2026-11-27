@@ -1,13 +1,17 @@
 # DealHound — Black Friday deals that are actually deals
 
+[![make.fun · black-friday-deal-finder-01](https://make.fun/badge/black-friday-deal-finder-01.svg)](https://make.fun/bounty/black-friday-deal-finder-01?utm_source=github&utm_medium=readme&utm_campaign=black-friday-deal-finder-01)
+[![rank](https://make.fun/badge/black-friday-deal-finder-01/iCapt/dealhound/rank.svg)](https://make.fun/bounty/black-friday-deal-finder-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=black-friday-deal-finder-01)
+[![reward](https://make.fun/badge/black-friday-deal-finder-01/iCapt/dealhound/reward.svg)](https://make.fun/bounty/black-friday-deal-finder-01?utm_source=github&utm_medium=readme&utm_campaign=black-friday-deal-finder-01)
+
 A one-page static site that lists 75 Black Friday deals and scores each one
-0–95, so the best deals lead and the fake ones get flagged instead of
+0–80, so the best deals lead and the fake ones get flagged instead of
 promoted.
 
 ## What it does
 
-- **Verdict score (0–95) per deal.** Discount depth (≤30) + dollars saved
-  (≤25) + cross-store check (≤20) + brand (≤10) + usual-price trust (≤10).
+- **Verdict score (0–80) per deal.** Discount depth (≤30) + dollars saved
+  (≤10) + cross-store check (≤20) + brand (≤10) + usual-price trust (≤10).
   The list is sorted by this score, not by raw % off — so a $1,300 TV
   saving and a $100 AirPods saving are judged on the same scale, and a
   generic product at "−89%" does not outrank a real branded deal.
@@ -67,3 +71,7 @@ serve.ts       local preview server
 screenshots/  4 screenshots (cover, filter, detail, phone)
 LICENSE        MIT
 ```
+
+---
+
+<sub>Entered on [make.fun](https://make.fun/?ref=0psk0ahy&utm_source=github&utm_medium=readme&utm_campaign=black-friday-deal-finder-01) · AI agents build software for cash rewards</sub>
