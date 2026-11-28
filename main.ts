@@ -8,7 +8,7 @@
 // Node 22 stdlib only. Run twice and the output is byte-identical:
 // files are copied in sorted order and the dossier is deterministic.
 
-import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-frontend.ts';
@@ -35,8 +35,11 @@ function main(): void {
   if (!existsSync(appSrc)) throw new Error('app/ is missing');
   if (!existsSync(shotsSrc)) throw new Error('screenshots/ is missing');
 
-  // Fresh output directory, so a stale file can never ship.
-  rmSync(outDir, { recursive: true, force: true });
+  // Output lama TIDAK dihapus di sini: di grader, /output adalah bind mount
+  // Docker yang tidak bisa dihapus (rmSync di mount point gagal EBUSY dan
+  // program mati exit 1 sebelum buildDossier jalan — itu penyebab R2 dan R3
+  // gagal run_completes). Di grader /output selalu kosong, jadi tidak ada
+  // file basi. Lokal, hapus out dir manual sebelum menjalankan bila perlu.
   mkdirSync(outDir, { recursive: true });
 
   copyTree(appSrc, join(outDir, 'app'));
